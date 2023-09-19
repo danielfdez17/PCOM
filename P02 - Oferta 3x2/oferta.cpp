@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <set>
+#include <map>
 using namespace std;
 
 const int MAX = 10001;
@@ -16,17 +17,19 @@ bool resuelveCaso() {
     int libros; cin >> libros;
     if (!cin) return false;
     
-    int descuento = 0, minimo = MAX;
+    // int descuento = 0, minimo = MAX;
 
-    for (int i = 0; i < libros; i++) {
-        int x; cin >> x;
-        minimo = min(minimo, x);
-        if ((i + 1) % 3 == 0) {
-            descuento += minimo;
-            minimo = MAX;
-        } 
-    }
+    // LEYENDO DE LA ENTRADA
+    // for (int i = 0; i < libros; i++) {
+    //     int x; cin >> x;
+    //     minimo = min(minimo, x);
+    //     if ((i + 1) % 3 == 0) {
+    //         descuento += minimo;
+    //         minimo = MAX;
+    //     } 
+    // }
 
+    // VECTOR
     // for (int i = 0; i < libros; i++) {
     //     minimo = min(minimo, precios[i]);
     //     if ((i + 1) % 3 == 0) {
@@ -35,24 +38,29 @@ bool resuelveCaso() {
     //     } 
     // }
     
+    // CONJUNTO
     // set<int>precios;
-    // for (int i = 0; i < libros; i++) {
-    //     int x; cin >> x;
-    //     precios.insert(x);
-    // }
+    map<int, int>precios;
+    for (int i = 0; i < libros; i++) {
+        int x; cin >> x;
+        map<int, int>::iterator it = precios.find(x);
+        if (it == precios.end()) precios.insert({x, 1});
+        else it->second++;
+    }
 
+    int descuento = 0, minimo = MAX, cont = 1;
 
-    // int descuento = 0, minimo = MAX, cont = 1;
-
-    // for (set<int>::reverse_iterator it = precios.rbegin(); it != precios.rend(); it++) {
-    //     minimo = min(minimo, *it);
-    //     if (cont == 3) {
-    //         descuento += minimo;
-    //         minimo = MAX;
-    //         cont = 0;
-    //     }
-    //     cont++;
-    // }
+    for (map<int, int>::reverse_iterator it = precios.rbegin(); it != precios.rend(); it++) {
+        minimo = min(minimo, it->first);
+        while (it->second--) {
+            if (cont == 3) {
+                descuento += minimo;
+                minimo = MAX;
+                cont = 0;
+            }
+            cont++;
+        }
+    }
 
 
     cout << descuento << "\n";
