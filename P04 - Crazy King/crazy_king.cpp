@@ -66,7 +66,7 @@ void resuelveCaso() {
         }
     }
 
-    mostrar_tablero();
+    //mostrar_tablero();
     
     bool found = false;
     queue<tcasilla>q;
