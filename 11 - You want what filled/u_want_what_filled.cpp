@@ -15,14 +15,15 @@ struct tprioridad {
     tprioridad(char t, int ta) : tipo(t), tam(ta) {}
 };
 
-bool operator<(tprioridad const& pi, tprioridad const& pd) {
-    if (pi.tam < pd.tam) return true;
+bool operator<(tprioridad const&pi, tprioridad const&pd) {
     if (pi.tam == pd.tam) return pi.tipo > pd.tipo;
-    return false;
+    return pi.tam < pd.tam;
+
 }
 
-int movimientos[8][2] = { {0,1},{-1,1},{-1,0},{-1,-1},{0,-1},{1,-1},{1,0},{1,1} };
+int movimientos[8][2] = {{0,1},{-1,1},{-1,0},{-1,-1},{0,-1},{1,-1},{1,0},{1,1}};
 int cont = 1, x, y;
+priority_queue<tprioridad>cola;
 char tablero[MAX][MAX];
 bool visitados[MAX][MAX];
 
@@ -32,9 +33,9 @@ bool ok(int f, int c) {
 
 int dfs(int f, int c) {
     int tam = 1; visitados[f][c] = true;
-    for(int i = 0; i < MOVS; i++) {
+    for (int i = 0; i < MOVS; i++) {
         int nf = f + movimientos[i][0], nc = c + movimientos[i][1];
-        if(ok(nf, nc) && tablero[nf][nc] == tablero[f][c] && !visitados[nf][nc])
+        if (ok(nf, nc) && tablero[nf][nc] == tablero[f][c] && !visitados[nf][nc]) 
             tam += dfs(nf, nc);
     }
     return tam;
@@ -45,27 +46,26 @@ int dfs(int f, int c) {
 bool resuelveCaso() {
     // leer los datos de la entrada
     cin >> x >> y;
-    if(x == 0 && y == 0) return false;
+    if (x == 0 && y == 0) return false;
 
-    for(int i = 0; i < x; i++) {
-        for(int j = 0; j < y; j++) {
+    for (int i = 0; i < x; i++) {
+        for (int j = 0; j < y; j++) {
             cin >> tablero[i][j];
             visitados[i][j] = false;
         }
     }
 
-    priority_queue<tprioridad>cola;
-    for(int i = 0; i < x; i++) {
-        for(int j = 0; j < y; j++) {
-            if(!visitados[i][j] && tablero[i][j] != '.') {
-                cola.push({ tablero[i][j], dfs(i, j) });
+    for (int i = 0; i < x; i++) {
+        for (int j = 0; j < y; j++) {
+            if (!visitados[i][j] && tablero[i][j] != '.') {
+                cola.push({tablero[i][j], dfs(i, j)});
             }
         }
     }
 
     // escribir sol
     cout << "Problem " << cont << ":\n";
-    while(!cola.empty()) {
+    while (!cola.empty()) {
         tprioridad p = cola.top(); cola.pop();
         cout << p.tipo << " " << p.tam << "\n";
     }
@@ -73,26 +73,26 @@ bool resuelveCaso() {
     cont++;
 
     return true;
-
+    
 }
 
 int main() {
     // Para la entrada por fichero.
     // Comentar para acepta el reto
-#ifndef DOMJUDGE
-    std::ifstream in("datos.txt");
-    auto cinbuf = std::cin.rdbuf(in.rdbuf()); //save old buf and redirect std::cin to casos.txt
-#endif 
+    #ifndef DOMJUDGE
+     std::ifstream in("datos.txt");
+     auto cinbuf = std::cin.rdbuf(in.rdbuf()); //save old buf and redirect std::cin to casos.txt
+     #endif 
+    
+    
+    while (resuelveCaso());
 
-
-    while(resuelveCaso());
-
-
+    
     // Para restablecer entrada. Comentar para acepta el reto
-#ifndef DOMJUDGE // para dejar todo como estaba al principio
-    std::cin.rdbuf(cinbuf);
-    system("PAUSE");
-#endif
-
+     #ifndef DOMJUDGE // para dejar todo como estaba al principio
+     std::cin.rdbuf(cinbuf);
+     system("PAUSE");
+     #endif
+    
     return 0;
 }
