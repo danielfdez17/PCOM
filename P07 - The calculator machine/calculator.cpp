@@ -5,12 +5,18 @@
 #include <fstream>
 #include <queue>
 #include <vector>
+#include <cstring>
 using namespace std;
 
 const int MAX = 10000, RAMAS = 3;
 
-vector<bool>visitados(MAX, false);
-vector<int>dist(MAX, 0);
+bool visitados[MAX];
+int dist[MAX];
+
+struct par {
+    int num, teclas;
+    par(int n, int t) : num(n), teclas(t) {}
+};
 
 int next(int u, int i) {
     switch(i) {
@@ -21,7 +27,30 @@ int next(int u, int i) {
     return u % MAX;
 }
 
+int bfs2(int origen, int destino) {
+    if (origen == destino) return 0;
+    queue<par>cola;
+    visitados[origen] = true;
+    cola.push({origen, 0});
+    par p(0, 0);
+
+    while (!cola.empty()) {
+        p = cola.front(); cola.pop();
+        for (int i = 0; i < RAMAS; i++) {
+            int v = next(p.num, i);
+            if (v == destino) return p.teclas + 1;
+            if (!visitados[v]) {
+                visitados[v] = true;
+                cola.push({v, p.teclas + 1});
+            }
+        }
+    }
+
+    return p.teclas;
+}
+
 int bfs(int origen, int destino) {
+    if (origen == destino) return 0;
     int teclas_pulsadas = 0;
     queue<int>cola;
     dist[origen] = 0; visitados[origen] = true;
@@ -50,9 +79,10 @@ bool resuelveCaso() {
     // leer los datos de la entrada
     int origen, destino; cin >> origen >> destino;
     if (!cin) return false;
-    
-    if (origen == destino) cout << "0\n";
-    else cout << bfs(origen, destino) << "\n";
+    memset(visitados, 0, sizeof(bool));
+    memset(dist, 0, sizeof(int));
+    // cout << bfs(origen, destino) << "\n";
+    cout << bfs2(origen, destino) << "\n";
 
         
     return true;
