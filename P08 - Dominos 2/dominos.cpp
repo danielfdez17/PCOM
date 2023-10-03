@@ -1,28 +1,36 @@
-// Daniel Fernandez Ortiz
+// Alex Bonilla Taco y Daniel Fernandez Ortiz
 // PC03
 #include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <queue>
 #include <vector>
+#include <cstring>
 using namespace std;
 
 const int MAX = 10000;
 
 queue<int>cola;
-vector<bool>visitados(MAX, false);
-vector<int>dist(MAX, 0);
+bool visitados[MAX];
+int dist[MAX];
+vector<vector<int>>adjList(MAX);
+int fichas_caidas;
+
 
 int bfs(int u) {
-    int fichas_caidas = 0;
-    cola.push(u); visitados[u] = true;
+    cola.push(u); 
+    dist[u] = 0;
+    visitados[u] = true;
+
     while (!cola.empty()) {
         int v = cola.front(); cola.pop();
-        if (!visitados[v]) {
-            visitados[v] = true;
-            dist[v] = dist[u] + 1;
-            fichas_caidas++;
-            cola.push(v);
+        for (int w : adjList[v]) {
+            if (!visitados[w]) {
+                visitados[w] = true;
+                dist[w] = dist[v] + 1;
+                fichas_caidas++;
+                cola.push(w);
+            }
         }
     }
     return fichas_caidas;
@@ -33,14 +41,27 @@ int bfs(int u) {
 void resuelveCaso() {
 
     int n, m, l; cin >> n >> m >> l;
-    for (int i = 0; i < m; i++) {
-        
+    memset(visitados, 0, sizeof(visitados));
+    memset(dist, 0, sizeof(dist));
+    for (int i = 0; i < MAX; i++) {
+        adjList[i].clear();
     }
+    for (int i = 0; i < m; i++) {
+        int x, y; cin >> x >> y;
+        adjList[x-1].push_back(y-1);
+        // adjList[y-1].push_back(x-1);
+    }
+    fichas_caidas = 0;
     for (int i = 0; i < l; i++) {
         int x; cin >> x; 
-        cola.push(x);
-        visitados[x] = true;
+        if (!visitados[x-1]) {
+            cola.push(x - 1);
+            visitados[x - 1] = true;
+            fichas_caidas++;
+        }
     }
+    int u = cola.front(); cola.pop();
+    cout << bfs(u) << "\n";    
     
 }
 
