@@ -13,6 +13,7 @@ const int MAX_T = 1000;
 string tablero[MAX_T][MAX_T];
 queue<pair<int, int>>joe, fire;
 
+//true si la casilla es . y false si # o F
 bool transitable[MAX_T][MAX_T];
 
 const int MOVS = 4;
@@ -32,10 +33,21 @@ struct tcasilla {
 
 
 // función que resuelve el problema
+/*
+*funcion que recibe dos colas, joe y fire
+*/
 int GetTime(queue<pair<int,int>>&fire, queue<pair<int, int>>& joe) {
     int turn = 1;
+    //bucle  en la que joe se va moviendo turno a turno por las casillas transitables hasta escapar  
+    //en cada iteracion a la cola de joe se le añade las casillas reales que puede moverse sin ser quemado en el siguiente turno
     while (!joe.empty()) {
+
+        //cola temporal para almacenar las posiciones de fuego y joe en un cierto turno 
         queue<pair<int, int>>qTem;
+
+        // en cada turno se propaga primero el fuego
+        // y encolamos temporalmente en qTem las casillas transitables en el siguiente turno, en las que se propagara el fuego
+        //salimos del bucle siempre despues de encolar dichas casillas y marcarlas como no transitables
         while (!fire.empty()){
             tcasilla casilla(fire.front());
             fire.pop();
@@ -50,8 +62,15 @@ int GetTime(queue<pair<int,int>>&fire, queue<pair<int, int>>& joe) {
             
 
         }
+        //encolamos en fire (cola vacia) las casillas de la cola temporal 
+        //para que en el siguiente turno vuelva a entrar en el bucle la cola de fire y recorra las nuevas casillas con fuego
         fire.swap(qTem);
         
+
+        //bucle en el que miramos si joe puede moverse a alguna posicion donde no se haya propagado el fuego antes
+        //si consigue moverse, encolamos temporalmente en qTem las posiciones siguientes transitables.
+        //en el caso que la siguiente casilla sea transitable y ademas se casilla limite del tablero, retornamos el turno
+        //salimos del bucle cuando hemos terminado de vaciar la cola de joe que contiene las casillas transitables por joe
         while (!joe.empty())
         {
             tcasilla pos(joe.front()); joe.pop();
@@ -69,9 +88,11 @@ int GetTime(queue<pair<int,int>>&fire, queue<pair<int, int>>& joe) {
             }
         }
 
+        //encolamos en joe (cola vacia) las casillas de la cola temporal 
+        //para que en el siguiente turno vuelva a entrar en el bucle la cola de joe y recorra las nuevas casillas transitables
         joe.swap(qTem);
         
-
+        //avanzamos al siguiente turno
         ++turn;
     }
     return -1;
@@ -119,7 +140,6 @@ void resuelveCaso() {
     */
   /* TipoSolucion sol = resolver(datos);*/
     // escribir sol
-    
     int time = GetTime(fire,joe);
     if (time == -1)
         cout << "IMPOSSIBLE\n";
