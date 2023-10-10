@@ -1,0 +1,115 @@
+// Alex Bonilla Taco y Daniel Fernandez Ortiz
+// PC03
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <queue>
+#include <cstring>
+using namespace std;
+
+#define MAX 51
+#define MAX_MOVS 8
+
+int movs[MAX_MOVS][2] = { {0,1},{-1,1},{-1,0},{-1,-1},{0,-1},{1,-1},{1,0},{1,1,} };
+
+struct casilla {
+    int fila, columna, pasos;
+};
+
+bool operator<(casilla const& i, casilla const& d) {
+    return i.pasos > d.pasos;
+}
+
+string mapa[MAX][MAX];
+bool visitados[MAX][MAX];
+int filas, columnas, tesoros;
+casilla inicio_destino;
+queue<casilla>cola_nativos;
+
+bool ok(int i, int j) {
+    return 0 <= i && i < filas && 0 <= j && j < columnas;
+}
+
+void marcar_nativos() {
+    while(!cola_nativos.empty()) {
+        casilla front = cola_nativos.front(); cola_nativos.pop();
+        for(int i = 0; i < MAX_MOVS; i++) {
+            int nf = front.fila + movs[i][0], nc = front.columna + movs[i][1];
+            if(ok(nf, nc) && mapa[nf][nc] == ".")
+                mapa[nf][nc] = "#";
+        }
+    }
+}
+
+void dijkstra() {
+    priority_queue<casilla, vector<casilla>, less<casilla>> cola;
+    cola.push({ inicio_destino });
+    visitados[inicio_destino.fila][inicio_destino.columna] = true;
+    while(!cola.empty()) {
+        casilla front = cola.top(); cola.pop();
+        inicio_destino.pasos = front.pasos;
+        for(int i = 0; i < MAX_MOVS; i++) {
+            if(tesoros == 0) {
+                memset(visitados, 0, sizeof(visitados));
+                visitados[front.fila][front.columna] = true;
+            }
+            int nf = front.fila + movs[i][0], nc = front.columna + movs[i][1];
+            if(ok(nf, nc) && !visitados[nf][nc] && mapa[nf][nc] == "@" && front.pasos != 0 && tesoros == 0) {
+                inicio_destino.pasos = front.pasos + 1;
+                return;
+            }
+            if(ok(nf, nc) && !visitados[nf][nc] && (mapa[nf][nc] == "." || mapa[nf][nc] == "!")) {
+                if(mapa[nf][nc] == "!") tesoros--;
+                visitados[nf][nc] = true;
+                cola.push({ nf,nc,front.pasos + 1 });
+            }
+        }
+    }
+}
+
+// Resuelve un caso de prueba, leyendo de la entrada la
+// configuración, y escribiendo la respuesta
+bool resuelveCaso() {
+    cin >> filas >> columnas;
+    if (filas == 0 && columnas == 0) return false;
+
+    tesoros = 0;
+    memset(visitados, 0, sizeof(visitados));
+    for(int i = 0; i < filas; i++) {
+        for(int j = 0; j < columnas; j++) {
+            char c; cin >> c;
+            if(c == '@') inicio_destino = casilla({ i, j, 0 });
+            else if(c == '*') cola_nativos.push({ i, j, 0 });
+            else if(c == '!') tesoros++;
+            mapa[i][j] = c;
+        }
+    }
+
+    marcar_nativos();
+    dijkstra();
+
+    cout << inicio_destino.pasos << "\n";
+
+    return true;
+}
+
+int main() {
+    // Para la entrada por fichero.
+    // Comentar para acepta el reto
+#ifndef DOMJUDGE
+    std::ifstream in("datos.txt");
+    auto cinbuf = std::cin.rdbuf(in.rdbuf()); //save old buf and redirect std::cin to casos.txt
+#endif 
+
+
+    while(resuelveCaso());
+
+
+    // Para restablecer entrada. Comentar para acepta el reto
+#ifndef DOMJUDGE // para dejar todo como estaba al principio
+    std::cin.rdbuf(cinbuf);
+    system("PAUSE");
+#endif
+
+    return 0;
+}
