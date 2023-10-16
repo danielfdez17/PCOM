@@ -19,12 +19,12 @@ void bfs() {
     queue<string>cola;
     cola.push(origen);
     visitados[origen] = true;
-    while(!cola.empty()) {
+    while (!cola.empty()) {
         string front = cola.front(); cola.pop();
         for (string v : grafo[front]) {
             if (!visitados[v]) {
                 visitados[v] = true;
-                parejas.push_back({front, v});
+                parejas.push_back({ front, v });
                 cola.push(v);
             }
         }
@@ -54,36 +54,36 @@ bool resuelveCaso() {
 
     if (!visitados[destino]) cout << "No route\n";
     else {
-        for (pair<string, string>&p : parejas) {
+        for (pair<string, string>& p : parejas) {
             cout << p.first << " " << p.second << "\n";
         }
     }
     cout << "\n";
-    
+
     // escribir sol
-    
-    
+
+
     return true;
-    
+
 }
 
 int main() {
     // Para la entrada por fichero.
     // Comentar para acepta el reto
-    #ifndef DOMJUDGE
+#ifndef DOMJUDGE
     ifstream in("datos.txt");
     auto cinbuf = cin.rdbuf(in.rdbuf()); //save old buf and redirect cin to casos.txt
-    #endif 
-    
-    
+#endif 
+
+
     while (resuelveCaso());
 
-    
+
     // Para restablecer entrada. Comentar para acepta el reto
-     #ifndef DOMJUDGE // para dejar todo como estaba al principio
-     cin.rdbuf(cinbuf);
-     system("PAUSE");
-     #endif
-    
+#ifndef DOMJUDGE // para dejar todo como estaba al principio
+    cin.rdbuf(cinbuf);
+    system("PAUSE");
+#endif
+
     return 0;
 }
