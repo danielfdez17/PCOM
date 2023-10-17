@@ -9,8 +9,8 @@
 #include <algorithm>
 #include <queue>
 using namespace std;
-const int MAX_T = 1000;
-string tablero[MAX_T][MAX_T];
+const int MAX_T = 1001;
+char tablero[MAX_T][MAX_T];
 queue<pair<int, int>>joe, fire;
 
 //true si la casilla es . y false si # o F
@@ -30,6 +30,8 @@ struct tcasilla {
     tcasilla(pair<int, int>q) : fila(q.first), columna(q.second) {}
 };
 
+        //cola temporal para almacenar las posiciones de fuego y joe en un cierto turno 
+queue<pair<int, int>>qTem;
 
 
 // función que resuelve el problema
@@ -41,15 +43,11 @@ int GetTime(queue<pair<int,int>>&fire, queue<pair<int, int>>& joe) {
     //bucle  en la que joe se va moviendo turno a turno por las casillas transitables hasta escapar  
     //en cada iteracion a la cola de joe se le añade las casillas reales que puede moverse sin ser quemado en el siguiente turno
     while (!joe.empty()) {
-
-        //cola temporal para almacenar las posiciones de fuego y joe en un cierto turno 
-        queue<pair<int, int>>qTem;
-
         // en cada turno se propaga primero el fuego
         // y encolamos temporalmente en qTem las casillas transitables en el siguiente turno, en las que se propagara el fuego
         //salimos del bucle siempre despues de encolar dichas casillas y marcarlas como no transitables
         while (!fire.empty()){
-            tcasilla casilla(fire.front());
+            tcasilla casilla=fire.front();
             fire.pop();
             for (int i = 0; i < MOVS; i++) {
                 int nf = casilla.fila + movs[i][0], nc = casilla.columna + movs[i][1];
@@ -73,18 +71,17 @@ int GetTime(queue<pair<int,int>>&fire, queue<pair<int, int>>& joe) {
         //salimos del bucle cuando hemos terminado de vaciar la cola de joe que contiene las casillas transitables por joe
         while (!joe.empty())
         {
-            tcasilla pos(joe.front()); joe.pop();
+            tcasilla pos=joe.front(); joe.pop();
             for (int i = 0; i < MOVS; i++) {
                 int nf = pos.fila + movs[i][0], nc = pos.columna + movs[i][1];
-                if (transitable[nf][nc]&&ok(nf, nc) ) qTem.push(make_pair(nf, nc));
-                
-                else if (!ok(nf, nc) && !transitable[nf][nc]) {
-                    
+                if (!ok(nf, nc)) {
                     return turn;
-
+                }
+                if (transitable[nf][nc]) {
+                    transitable[nf][nc] = false;
+                    qTem.push(make_pair(nf, nc));
                 }
 
-                
             }
         }
 
@@ -110,35 +107,18 @@ void resuelveCaso() {
             cin >> letra;
             tablero[i][j] = letra;
             transitable[i][j] = false;
-            if (tablero[i][j] == "J") {
+            if (tablero[i][j] == 'J') {
                 joe.push(make_pair(i,j));
-                transitable[i][j] = true;
             }
-            else if (tablero[i][j] == "F") {
+            else if (tablero[i][j] == 'F') {
                 fire.push(make_pair(i, j));
             }
-            else if (tablero[i][j] == ".") transitable[i][j] = true;
+            else if (tablero[i][j] == '.') transitable[i][j] = true;
         }
 
     }
 
-    for (int i = 0; i < r; i++) {
-        for (int j = 0; j < c; j++) {
-            cout << tablero[i][j] << " ";
-        }
-        cout << "\n";
-    }
-    /*
-    * //ver matriz de transitable
-    for (int i = 0; i < r; i++) {
-        for (int j = 0; j < c; j++) {
-            if (transitable[i][j])
-                cout << "T "; else cout << "F ";
-        }
-        cout << "\n";
-    }
-    */
-  /* TipoSolucion sol = resolver(datos);*/
+    
     // escribir sol
     int time = GetTime(fire,joe);
     if (time == -1)
