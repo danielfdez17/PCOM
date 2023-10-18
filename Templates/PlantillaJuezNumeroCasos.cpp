@@ -1,28 +1,14 @@
-// Nombre del alumno .....
-// Usuario del Juez ......
-
-
+// Daniel Fernandez Ortiz
+// PC03
 #include <iostream>
 #include <iomanip>
 #include <fstream>
-
-
-// función que resuelve el problema
-TipoSolucion resolver(TipoDatos datos) {
-    
-    
-}
+using namespace std;
 
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
 void resuelveCaso() {
-    // leer los datos de la entrada
-    
-    
-    TipoSolucion sol = resolver(datos);
-    // escribir sol
-    
-    
+        
 }
 
 int main() {

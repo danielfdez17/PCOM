@@ -1,34 +1,17 @@
-// Nombre del alumno .....
-// Usuario del Juez ......
-
-
+// Daniel Fernandez Ortiz
+// PC03
 #include <iostream>
 #include <iomanip>
 #include <fstream>
-
-
-
-// función que resuelve el problema
-TipoSolucion resolver(TipoDatos datos) {
-    
-    
-}
+using namespace std;
 
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
 bool resuelveCaso() {
-    // leer los datos de la entrada
     
-    if (! std::cin)
-        return false;
+    if (!cin) return false;
     
-    TipoSolucion sol = resolver(datos);
-    
-    // escribir sol
-    
-    
-    return true;
-    
+    return true;    
 }
 
 int main() {
@@ -40,8 +23,7 @@ int main() {
      #endif 
     
     
-    while (resuelveCaso())
-        ;
+    while (resuelveCaso());
 
     
     // Para restablecer entrada. Comentar para acepta el reto
