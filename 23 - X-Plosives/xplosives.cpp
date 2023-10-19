@@ -52,8 +52,8 @@ bool resuelveCaso() {
             if (uf.numSets == 1) break;
         }
     }
-
-    cout << A - coste << "\n";
+    if (uf.numSets == vertices) cout << "0\n";
+    else cout << A - coste << "\n";
     
     return true;    
 }
