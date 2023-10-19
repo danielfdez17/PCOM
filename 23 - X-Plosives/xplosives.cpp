@@ -18,7 +18,7 @@ struct UFDS {
     }
     int find(int x) {
         return (p[x] == x) ? x : p[x] = find(p[x]);
-    }
+    } 
     void merge(int x, int y) {
         int i = find(x), j = find(y);
         if (i == j) return;
