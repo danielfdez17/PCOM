@@ -6,12 +6,14 @@
 #include <vector>
 using namespace std;
 
+#define MAX_SIZE 1e6
+
 using arista = pair<int , pair<int, int>>;
 
 struct UFDS {
     vector<int>p;
     int numSets;
-    UFDS(int n) : p(n, 0), numSets(n) {
+    UFDS(int n) : p(MAX_SIZE, 0), numSets(n) {
         for (int i = 0; i < n; i++) p[i] = i;
     }
     int find(int x) {
@@ -46,7 +48,7 @@ bool resuelveCaso() {
     for (auto ar : aristas) {
         if (uf.find(ar.second.first) != uf.find(ar.second.second)) {
             uf.merge(ar.second.first, ar.second.second);
-            coste++;
+            coste += ar.first;
             if (uf.numSets == 1) break;
         }
     }
