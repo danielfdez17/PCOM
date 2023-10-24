@@ -8,53 +8,60 @@ using namespace std;
 
 #define MAX_SIZE 1e6
 
-using arista = pair<int , pair<int, int>>;
+vector<int>parents, sizes;
 
-struct UFDS {
-    vector<int>p;
-    int numSets;
-    UFDS(int n) : p(MAX_SIZE, 0), numSets(n) {
-        for (int i = 0; i < n; i++) p[i] = i;
+void make_set(int v) {
+    if (parents[v] == -1) {
+        parents[v] = v;
+        sizes[v] = 1;
     }
-    int find(int x) {
-        return (p[x] == x) ? x : p[x] = find(p[x]);
-    } 
-    void merge(int x, int y) {
-        int i = find(x), j = find(y);
-        if (i == j) return;
-        p[i] = j;
-        numSets--;
+}
+
+int get_parent(int v) {
+    if (parents[v] == v) return v;
+    return parents[v] = get_parent(parents[v]);
+}
+
+void merge(int i, int j) {
+    i = get_parent(i); j = get_parent(j);
+    if (i != j) {
+        if (sizes[i] < sizes[j]) {
+            int aux = i;
+            i = j;
+            j = aux;
+        }
+        parents[j] = i;
+        sizes[i] += sizes[j];
     }
-};
+}
 
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
 bool resuelveCaso() {
-    int a, b; cin >> a;
+    int a, b; cin >> a >> b;
     if (!cin) return false;
+        
+    int refusals = 0;
+    parents.assign(MAX_SIZE, -1);
+    sizes.assign(MAX_SIZE, 0);
 
-    int vertices = 1, A = 0;
-    vector<arista> aristas;
-    while (a != -1) {
+    make_set(a);
+    make_set(b);
+    merge(a, b);
+
+    while (cin >> a) {
+        if (a == -1) break;
         cin >> b;
-        aristas.push_back({1, {a - 1, b - 1}});
-        ++A;
-        ++vertices;
-        cin >> a;
-    }
+        
+        make_set(a);
+        make_set(b);
 
-    int coste = 0;
-    UFDS uf(vertices);
-    for (auto ar : aristas) {
-        if (uf.find(ar.second.first) != uf.find(ar.second.second)) {
-            uf.merge(ar.second.first, ar.second.second);
-            coste += ar.first;
-            if (uf.numSets == 1) break;
-        }
+        a = get_parent(a);
+        b = get_parent(b);
+        if (a == b) refusals++;
+        else merge(a, b);
     }
-    if (uf.numSets == vertices) cout << "0\n";
-    else cout << A - coste << "\n";
-    
+    cout << refusals << "\n";
     return true;    
 }
 
@@ -62,19 +69,19 @@ int main() {
     // Para la entrada por fichero.
     // Comentar para acepta el reto
     #ifndef DOMJUDGE
-     std::ifstream in("datos.txt");
-     auto cinbuf = std::cin.rdbuf(in.rdbuf()); //save old buf and redirect std::cin to casos.txt
-     #endif 
-    
-    
+        std::ifstream in("datos.txt");
+        auto cinbuf = std::cin.rdbuf(in.rdbuf()); //save old buf and redirect std::cin to casos.txt
+        #endif 
+
+
     while (resuelveCaso());
 
-    
+
     // Para restablecer entrada. Comentar para acepta el reto
-     #ifndef DOMJUDGE // para dejar todo como estaba al principio
-     std::cin.rdbuf(cinbuf);
-     system("PAUSE");
-     #endif
-    
+        #ifndef DOMJUDGE // para dejar todo como estaba al principio
+        std::cin.rdbuf(cinbuf);
+        system("PAUSE");
+        #endif
+
     return 0;
 }
