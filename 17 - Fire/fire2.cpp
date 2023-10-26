@@ -11,7 +11,6 @@
 using namespace std;
 const int MAX_T = 1001;
 char tablero[MAX_T][MAX_T];
-queue<pair<int, int>>joe, fire;
 
 //true si la casilla es . y false si # o F
 bool transitable[MAX_T][MAX_T];
@@ -27,18 +26,19 @@ struct tcasilla {
     int fila, columna;
     tcasilla() : fila(0), columna(0) {}
     tcasilla(int f, int c) : fila(f), columna(c) {}
-    tcasilla(pair<int, int>q) : fila(q.first), columna(q.second) {}
+    
 };
 
+queue<tcasilla>joe, fire;
         //cola temporal para almacenar las posiciones de fuego y joe en un cierto turno 
-queue<pair<int, int>>qTem;
+queue<tcasilla>qTem;
 
 
 // función que resuelve el problema
 /*
 *funcion que recibe dos colas, joe y fire
 */
-int GetTime(queue<pair<int,int>>&fire, queue<pair<int, int>>& joe) {
+int GetTime(queue<tcasilla>&fire, queue<tcasilla>& joe) {
     int turn = 1;
     //bucle  en la que joe se va moviendo turno a turno por las casillas transitables hasta escapar  
     //en cada iteracion a la cola de joe se le añade las casillas reales que puede moverse sin ser quemado en el siguiente turno
@@ -54,7 +54,7 @@ int GetTime(queue<pair<int,int>>&fire, queue<pair<int, int>>& joe) {
                 if (ok(nf, nc) && transitable[nf][nc])
                 {
                     transitable[nf][nc] = false;
-                    qTem.push(make_pair(nf, nc));
+                    qTem.push({ nf, nc });
                 }
             }
             
@@ -78,8 +78,8 @@ int GetTime(queue<pair<int,int>>&fire, queue<pair<int, int>>& joe) {
                     return turn;
                 }
                 if (transitable[nf][nc]) {
-                    transitable[nf][nc] = false;
-                    qTem.push(make_pair(nf, nc));
+                   // transitable[nf][nc] = false;
+                    qTem.push({ nf, nc });
                 }
 
             }
@@ -108,10 +108,11 @@ void resuelveCaso() {
             tablero[i][j] = letra;
             transitable[i][j] = false;
             if (tablero[i][j] == 'J') {
-                joe.push(make_pair(i,j));
+                joe.push({ i,j });
+                transitable[i][j] = true;
             }
             else if (tablero[i][j] == 'F') {
-                fire.push(make_pair(i, j));
+                fire.push({ i, j });
             }
             else if (tablero[i][j] == '.') transitable[i][j] = true;
         }
