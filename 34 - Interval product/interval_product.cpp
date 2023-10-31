@@ -9,67 +9,43 @@ using namespace std;
 #define MAX_N 100000
 
 int getOne(int x) {
-    if (x > 0) return 1;
-    else if (x < 0) return -1;
-    return x;
+    if (x > 0) return 0;
+    else if (x < 0) return 1;
+    return -MAX_N;
 }
 
 void showOne(int x) {
-    if (x > 0) cout << "+";
-    else if (x < 0) cout << "-";
+    if (x >= 0) 
+        if (x == 0 || x % 2 == 0) cout << "+";
+        else cout << "-";
     else cout << "0";
 }
-class SegmentTree {
+
+class FenwickTree {
 private:
-    vector<int>st;
-    int tam;
-    int query(int vertex, int L, int R, int i, int j) {
-        if (i > R || j < L) return 0;
-        if (L >= i && R <= j) return st[vertex];
-        int mitad = (L + R) / 2;
-        int q1 = query(vertex * 2, L, mitad, i, j);
-        int q2 = query(vertex * 2 + 1, mitad + 1, R, i, j);
-        return getOne(getOne(q1) * getOne(q2));
-    }
-    void update(int vertex, int l, int r, int pos, int newVal) {
-        if (pos < l || r < pos) return;
-        if (l == r) {
-            st[vertex] = newVal;
-            return;
-        }
-        int m = (l + r) / 2;
-        if (l <= pos && pos <= m)
-            update(vertex * 2, l, m, pos, newVal);
-        else
-            update(vertex * 2 + 1, m + 1, r, pos, newVal);
-        st[vertex] = getOne(getOne(st[vertex * 2] * getOne(st[vertex * 2 + 1])));
-        cout << "UPDATE Pos: " << vertex << " " << st[vertex] << "\n";
-    }
-    void build(int *values, int p, int l, int r) {
-        if (l == r) {
-            // showOne(values[l]);
-            st[p] = getOne(values[l]);
-            return;
-        }
-        int m = (l + r) / 2;
-        build(values, 2 * p, l, m);
-        build(values, 2 * p + 1, m + 1, r);
-        st[p] = getOne(getOne(st[p * 2]) * getOne(st[p * 2 + 1]));
-    }
+    vector<int> ft;
 public:
-    SegmentTree(int maxN) {
-        st.reserve(4 * maxN + 10);
+    FenwickTree(int n) { ft.assign(n + 1, 0); }
+    int getSum(int b) {
+        int ret = 0;
+        while (b) {
+            ret += ft[b]; b -= (b & -b);
+        }
+        return ret;
     }
-    int query(int a, int b) {
-        return query(1, 0, tam - 1, a, b);
+    void add(int pos, int val) {
+        while (pos < ft.size()) {
+            ft[pos] += val; pos += (pos & - pos);
+        }
     }
-    void update(int pos, int newVal) {
-        update(1, 0, tam - 1, pos, newVal);
-        // showOne(st[pos]);
+    int getSum(int a, int b) {
+        return getSum(b) - getSum(a - 1);
     }
-    void build(int *values, int n) {
-        tam = n;
-        build(values, 1, 0, n - 1);
+    int getValue(int pos) {
+        return getSum(pos) - getSum(pos - 1);
+    }
+    void setValue(int pos, int val) {
+        add(pos, val - getValue(pos));
     }
 };
 
@@ -80,28 +56,25 @@ bool resuelveCaso() {
     int n, k; cin >> n >> k;
     if (!cin) return false;
 
-    SegmentTree segment(n);
-    int values[MAX_N];
+    FenwickTree fenwick(n);
 
     for (int i = 0; i < n; i++) {
         int x; cin >> x;
-        values[i] = getOne(x);
-    }
-    // cout << "build: ";
-    segment.build(values, n);
-    // cout << "\n";
+        fenwick.add(i + 1, getOne(x));
+    }    
 
-    for (int j = 0; j < k; j++) {
+    for (int i = 0; i < k; i++) {
         string op; cin >> op;
         if (op == "C") {
-            int i, v; cin >> i >> v;
-            segment.update(i - 1, getOne(v));
+            int I, V; cin >> I >> V;
+            fenwick.setValue(I, getOne(V));
         }
         else {
-            int i, i2; cin >> i >> i2;
-            showOne(segment.query(i - 1, i2 - 1));
+            int I, J; cin >> I >> J;
+            showOne(fenwick.getSum(I, J));
         }
     }
+
 
     cout << "\n";
     
