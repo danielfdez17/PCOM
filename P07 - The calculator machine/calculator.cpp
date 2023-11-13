@@ -8,10 +8,11 @@
 #include <cstring>
 using namespace std;
 
-const int MAX = 10000, RAMAS = 3;
+#define MODULO 10000
+#define BUTTONS 3
 
-bool visitados[MAX];
-int dist[MAX];
+bool visitados[MODULO];
+int dist[MODULO];
 
 struct par {
     int num, teclas;
@@ -24,7 +25,7 @@ int next(int u, int i) {
         case 1: u *= 2; break;
         case 2: u /= 3; break;
     }
-    return u % MAX;
+    return u % MODULO;
 }
 
 int bfs2(int origen, int destino) {
@@ -36,7 +37,7 @@ int bfs2(int origen, int destino) {
 
     while (!cola.empty()) {
         p = cola.front(); cola.pop();
-        for (int i = 0; i < RAMAS; i++) {
+        for (int i = 0; i < BUTTONS; i++) {
             int v = next(p.num, i);
             if (v == destino) return p.teclas + 1;
             if (!visitados[v]) {
@@ -58,7 +59,7 @@ int bfs(int origen, int destino) {
 
     while (!cola.empty()) {
         int u = cola.front(); cola.pop();
-        for (int i = 0; i < RAMAS; i++) {
+        for (int i = 0; i < BUTTONS; i++) {
             int v = next(u, i);
             if (v == destino) return dist[u] + 1;
             if (!visitados[v]) {
