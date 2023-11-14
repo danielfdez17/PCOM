@@ -14,18 +14,32 @@ bool resuelveCaso() {
     int z, i, m, l; cin >> z >> i >> m >> l;
     if (z == 0 && i == 0 && m == 0 && l == 0) return false;
     int first_random = l;
-    int sequence = 0;
-    int next = (z * l + i) % m;
-    l = next;
+    // int sequence = 0;
+    // int next = (z * l + i) % m;
+    // l = next;
+    int next, sequence = 0;
     unordered_set<int>visitados;
     visitados.clear();
-    while (next != first_random && visitados.count(next) == 0) {
-        visitados.insert(next);
+    // while (next != first_random && visitados.count(next) == 0) {
+    //     visitados.insert(next);
+    //     next = (z * l + i) % m;
+    //     l = next;
+    //     ++sequence;
+    // }
+    // if (next == first_random) ++sequence;
+    while (true) {
         next = (z * l + i) % m;
+        if (next == first_random) {
+            sequence++;
+            break;
+        }
+        else if (visitados.count(next) != 0) {
+            break;
+        }
         l = next;
-        ++sequence;
+        visitados.insert(next);
+        sequence++;
     }
-    if (next == first_random) ++sequence;
     cout << "Case " << cases << ": " << sequence << "\n";
     cases++;
     return true;    
