@@ -80,8 +80,8 @@ bool resuelveCaso() {
     // leer los datos de la entrada
     int origen, destino; cin >> origen >> destino;
     if (!cin) return false;
-    memset(visitados, 0, sizeof(bool));
-    memset(dist, 0, sizeof(int));
+    memset(visitados, 0, MODULO * sizeof(bool));
+    memset(dist, 0, MODULO * sizeof(int));
     // cout << bfs(origen, destino) << "\n";
     cout << bfs2(origen, destino) << "\n";
 
