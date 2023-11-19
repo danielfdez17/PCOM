@@ -3,14 +3,14 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
-#include <climits>
+#include <climits> 
 #include <cstring>
 #include <vector>
 using namespace std;
 
 #define MAX 10000
 
-long long int dp[MAX + 1][MAX + 1];
+long long dp[MAX + 1][MAX + 1];
 
 int comb(int n, int r) {
     if (n == r || r == 0) return 1;
@@ -23,7 +23,7 @@ int comb(int n, int r) {
 bool resuelveCaso() {
     int n, r; cin >> n >> r;
     if (n == 0 && r == 0) return false;
-
+    memset(dp, -1, MAX * sizeof(long long));
     cout << comb(n, r) << "\n";
 
     return true;    
