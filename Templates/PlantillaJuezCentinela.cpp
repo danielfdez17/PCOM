@@ -1,4 +1,4 @@
-// Daniel Fernandez Ortiz
+// Alex Bonilla Taco y Daniel Fernandez Ortiz
 // PC03
 #include <iostream>
 #include <iomanip>
