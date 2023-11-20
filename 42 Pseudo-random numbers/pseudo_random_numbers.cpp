@@ -8,44 +8,46 @@
 using namespace std;
 #define MAX 10000
 int cases = 1;
+int z, i, m, l;
+unsigned int getNext(unsigned int x) {
+    int prod = ((z % m) * (x % m)) % m;
+    return ((prod % m) + (i % m)) % m;
+}
+typedef pair<unsigned int, unsigned int> uu;
+uu floydCycleFinding(unsigned int x0) {
+    int tortoise = getNext(x0), hare = getNext(getNext(x0));
+    while (tortoise != hare) { // Encontrar el ciclo
+        tortoise = getNext(tortoise);
+        hare = getNext(getNext(hare));
+    }
+    // Distancia del inicio a la tortuga == tortuga a la liebre == mu * lambda 
+    int mu = 0; hare = x0; // Resetear la liebre
+    while (tortoise != hare) { // Encontrar la primera vez que son iguales
+        tortoise = getNext(tortoise);
+        hare = getNext(hare);
+        mu++;
+    }
+    // Llevar la tortuga a la posicion de la liebre
+    int lambda = 1; hare = getNext(tortoise);
+    while (tortoise != hare) { // Avanzar cualquiera de ellas para encontrar el lambda
+        hare = getNext(hare);
+        lambda++;
+    }
+    return uu(mu, lambda);
+}
 
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
 bool resuelveCaso() {
-    int z, i, m, l; cin >> z >> i >> m >> l;
+    cin >> z >> i >> m >> l;
     if (z == 0 && i == 0 && m == 0 && l == 0) return false;
     int first_random = l;
-    int next, sequence = 0;
-    // unordered_set<int>visitados;
-    // visitados.clear();
-    bool visited[MAX];
-    memset(visited, 0, MAX * sizeof(bool));
-    visited[l] = true;
-    // while (next != first_random && visitados.count(next) == 0) {
-    //     visitados.insert(next);
-    //     // next = (z * l + i) % m;
-    //     l = next;
-    //     ++sequence;
-    // }
-    // if (next == first_random) ++sequence;
-    while (true) {
-        // next = (z * l + i) % m;
-        long long prod = ((z % m) * (l % m)) % m;
-        next = ((prod % m) + (i % m)) % m;
-        if (next == first_random) {
-            sequence++;
-            break;
-        }
-        else if (visited[next]) break;
-        // else if (visitados.count(next) != 0) {
-        //     break;
-        // }
-        l = next;
-        visited[next] = true;
-        // visitados.insert(next);
-        sequence++;
-    }
-    cout << "Case " << cases << ": " << sequence << "\n";
+    //     long long prod = ((z % m) * (l % m)) % m;
+    //     next = ((prod % m) + (i % m)) % m;
+    uu sol = floydCycleFinding(l);
+
+
+    cout << "Case " << cases << ": " << sol.second << "\n";
     cases++;
     return true;    
 }
