@@ -3,21 +3,34 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <cmath>
 using namespace std;
+
+int extendedEclidRec(int a, int b, int&u, int&v) {
+    if (!b) {
+        u = 1; v = 0; return a;
+    }
+    int r = extendedEclidRec(b, a % b, u, v);
+    int uAux = v;
+    int vAux = u - (a / b) * v;
+    u = uAux;
+    v = vAux;
+    return r;
+}
 
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
 bool resuelveCaso() {
-    long long b, p, m; cin >> b >> p >> m;
+    int b, p, m; cin >> b >> p >> m;
     if (!cin) return false;
-
-    long long res = 1;
-    b %= m;
-    while (p > 0) {
-        if (p % 2 == 1) res = ((res % m) * (b % m)) % m;
-        p = p >> 1;
-        b = ((b % m) * (b % m)) % m;
-    }
+    int u, v;
+    int res = extendedEclidRec(pow(b, p), m, u, v);
+    // b %= m;
+    // while (p > 0) {
+    //     if (p % 2 == 1) res = ((res % m) * (b % m)) % m;
+    //     p = p >> 1;
+    //     b = ((b % m) * (b % m)) % m;
+    // }
 
     // int i = 1;
     // int res = b;
