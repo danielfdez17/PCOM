@@ -228,12 +228,15 @@ void resuelveCaso() {
       
         int x,y; cin >> op >> x;
         if (op == "fd") {
-            
-            punto = punto * x;
+            punto.x = cos(punto.x + 100);
+            punto.y = sin(punto.y + 100);
+            // punto = punto * x;
         }
         else if (op == "bk") {
+            punto.x = cos(punto.x - 100);
+            punto.y = sin(punto.y - 100);
             
-            punto = punto * -x;
+            // punto = punto * -x;
         }
         else if (op == "lt") {
             punto = rotate(punto, x);
@@ -244,11 +247,7 @@ void resuelveCaso() {
 
     }
 
-    int size = int(turtle.size());
-    T height = 0;
-    int distance = 0;
-
-    distance =dist({1,1},punto);
+    int distance = dist({1,1}, punto);
 
 
     cout << distance << "\n";
