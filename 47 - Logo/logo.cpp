@@ -17,7 +17,7 @@ const double EPS = 1e-9;
 const double PI = acos(-1);
 
 using T = double;
-//bool lt(double a, double b) { return a - EPS < b; };
+bool lt(double a, double b) { return a - EPS < b; };
 //bool eq(double a, double b) { return fabs(a - b) < EPS; }
 
 //using T = int;
@@ -248,7 +248,7 @@ void resuelveCaso() {
     T height = 0;
     int distance = 0;
 
-    distance =dist2({0,0},punto);
+    distance =dist({1,1},punto);
 
 
     cout << distance << "\n";
