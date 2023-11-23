@@ -37,10 +37,16 @@ struct pt {
       if (x == o.x) return y < o.y;
       return x < o.x;
    }
+   bool operator<(pt o) const {
+      if (fabs(x - o.x) < EPS) return y < o.y;
+      return x < o.x;
+   }
 };
 
 
+// Devuelve el cuadrado del vector
 T sq(pt v) {return v.x*v.x + v.y*v.y;}
+// Devuelve el tamanio y magnitud del vector
 double abs(pt v) {return sqrt(sq(v));}
 
 ostream& operator<<(ostream& os, pt p) {
@@ -56,15 +62,18 @@ T dist2(pt a, pt b) {
 
 // PRODUCTOS
 
+// Producto escalar
 T dot(pt v, pt w) { return v.x*w.x + v.y*w.y; }
 
 bool isPerp(pt v, pt w) { return dot(v,w) == 0; }
 
+// Producto escalar entre el tamanio de los vectores
 double angle(pt v, pt w) {
    double cosTheta = dot(v,w) / abs(v) / abs(w);
    return acos(max(-1.0, min(1.0, cosTheta)));
 }
 
+// Producto vectorial
 T cross(pt v, pt w) { return v.x*w.y - v.y*w.x; }
 
 // positivo/cero/negativo: c a la izquieda/sobre/derecha de a-b
@@ -91,6 +100,7 @@ bool half(pt p) { // true if in blue half
     return p.y > 0 || (p.y == 0 && p.x < 0);
 }
 
+// ordena los puntos por cjtos colineales
 void polarSort(vector<pt> & v) {
    sort(v.begin(), v.end(), [](pt v, pt w) {
       return make_tuple(half(v), 0, sq(v)) < make_tuple(half(w), cross(v,w), sq(w));
@@ -100,14 +110,17 @@ void polarSort(vector<pt> & v) {
 
 // TRANSFORMACIONES
 
+// el objeto se mueve en la dir del vector tanto como su tamanio
 pt translate(pt v, pt p) { return p + v; }
 
 // scale p by a certain factor around a center c
+// factor > 0 => grande, factor < 0 => pequenio
 pt scale(pt c, double factor, pt p) {
    return c + (p - c)*factor;
 }
 
 // rotate p by a certain angle a counter-clockwise around origin
+// rotar en sentido anti horario
 pt rotate(pt p, double a) {
    return { p.x*cos(a) - p.y*sin(a), p.x*sin(a) + p.y*cos(a) };
 }
@@ -126,16 +139,20 @@ struct line {
    line(T a, T b, T c) : v({b,-a}), c(c) {}
    // from points p and q
    line(pt p, pt q) : v(q-p), c(cross(v,p)) {}
-   
+   // dice a que lado de la recta se encuentra p
+   // > 0, izq
+   // < 0, der
+   // == 0, en la recta
    T side(pt p) { return cross(v,p) - c; }
-   
+   // distancia minima entre un punto y la recta
    double dist(pt p) { return abs(side(p)) / abs(v); }
-   
+   // 
    line translate(pt t) { return {v, c + cross(v,t)}; }
-   
+   // devuelve la proyeccion del punto p con la recta this
    pt proj(pt p) { return p - perp(v)*side(p)/sq(v); }
 };
 
+// interseccion entre dos lineas
 bool inter(line l1, line l2, pt & out) {
    T d = cross(l1.v, l2.v);
    if (d == 0) return false;
