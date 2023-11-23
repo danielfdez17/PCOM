@@ -37,10 +37,10 @@ struct pt {
       if (x == o.x) return y < o.y;
       return x < o.x;
    }
-   bool operator<(pt o) const {
-      if (fabs(x - o.x) < EPS) return y < o.y;
-      return x < o.x;
-   }
+   // bool operator<(pt o) const {
+   //    if (fabs(x - o.x) < EPS) return y < o.y;
+   //    return x < o.x;
+   // }
 };
 
 
@@ -231,6 +231,9 @@ vector<pt> cutPolygon(pt a, pt b, vector<pt> const& P) {
       R.push_back(R[0]); // make R's first point = R's last point
    return R;
 }
+double angulo(double a) {
+    return a * PI / 180.00;
+}
 
 
 // Resuelve un caso de prueba, leyendo de la entrada la
@@ -238,9 +241,37 @@ vector<pt> cutPolygon(pt a, pt b, vector<pt> const& P) {
 void resuelveCaso() {
     int n; cin >> n;
     int boards; cin >> boards;
+    vector<pt>puntos;
+    double area = 0.0;
     for (int i = 0; i < boards; i++) {
-        
+        double x, y, w, h, alpha; cin >> x >> y >> w >> h >> alpha;
+        area += (w * h);
+        pt centro = {0,0};
+        pt v1 = {-w/2, h/2};
+        pt v2 = {-w/2, -h/2};
+        pt v3 = {w/2, h/2};
+        pt v4 = {w/2, -h/2};
+         v1 = rotate(v1, angulo(alpha));
+         v2 = rotate(v2, angulo(alpha));
+         v3 = rotate(v3, angulo(alpha));
+         v4 = rotate(v4, angulo(alpha));
+         v1 = translate(v1, {x,y});
+         v2 = translate(v2, {x,y});
+         v3 = translate(v3, {x,y});
+         v4 = translate(v4, {x,y});
+         puntos.push_back(v1);
+         puntos.push_back(v2);
+         puntos.push_back(v3);
+         puntos.push_back(v4);
+      //   v1 = {x-w/2, h/2};
+      //   v2 = {-w/2, -h/2};
+      //   v3 = {w/2, h/2};
+      //   v4 = {w/2, -h/2};
     }
+    vector<pt>res = convexHull(puntos);
+    double areaConvex = areaPolygon(res);
+    double sol = areaConvex / area * 100;
+    cout << fixed << setprecision(1) << sol << "%\n";
 }
 
 int main() {
