@@ -26,14 +26,14 @@ void factoriza(unsigned int i) {
     assert(i >= 2); // O comprobaciones especiales
     unsigned int p = 2;
     while(p*p <= i) { // ¡Mucho mejor que sqrt!
-    while(!(i % p)) {
-        cout << p << ' ';
-        i /= p;
-    }
-    ++p;
+        while(!(i % p)) {
+            cout << p << ' ';
+            i /= p;
+        }
+        ++p;
     }
     if (i != 1) // Podria quedarnos un unico primo
-    cout << i << ' ';
+        cout << i << ' ';
     cout << '\n';
 }
 
