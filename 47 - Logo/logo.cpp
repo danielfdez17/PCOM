@@ -17,7 +17,7 @@ const double EPS = 1e-9;
 const double PI = acos(-1);
 
 using T = double;
-bool lt(double a, double b) { return a - EPS < b; };
+//bool lt(double a, double b) { return a - EPS < b; };
 //bool eq(double a, double b) { return fabs(a - b) < EPS; }
 
 //using T = int;
@@ -145,7 +145,7 @@ bool inter(line l1, line l2, pt& out) {
 }
 
 
-// POLIGONOS, el primer y último puntos coinciden
+// POLIGONOS, el primer y último ts coinciden
 
 double areaTriangle(pt a, pt b, pt c) {
     return abs(cross(b - a, c - a)) / 2.0;
@@ -172,13 +172,13 @@ bool isConvex(vector<pt> const& p) {
 
 // ENVOLVENTE CONVEXA
 
-// para aceptar puntos colineales cambia a >=
+// para aceptar ts colineales cambia a >=
 // returns true if point r is on the left side of line pq
 bool ccw(pt p, pt q, pt r) {
     return orient(p, q, r) > 0;
 }
 
-// devuelve un polígono con la envolvente convexa de una nube de puntos P.
+// devuelve un polígono con la envolvente convexa de una nube de ts P.
 vector<pt> convexHull(vector<pt>& P) {
     int n = int(P.size()), k = 0;
     vector<pt> H(2 * n);
@@ -215,42 +215,48 @@ vector<pt> cutPolygon(pt a, pt b, vector<pt> const& P) {
         R.push_back(R[0]); // make R's first point = R's last point
     return R;
 }
+double angulo(double a) {
+    return a * PI / 180.00;
+}
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
 void resuelveCaso() {
     int c; cin >> c;
-    vector<pt>turtle;
-    pt punto = { 1,1 };
+    //turtle y vector direccion inicial
+    pt t = { 0,0 };
 
+    //op = fd,bk,lt,rt
+    string op;
 
-    while (c--) {
-        string op;
-      
-        int x,y; cin >> op >> x;
-        if (op == "fd") {
-            punto.x = cos(punto.x + 100);
-            punto.y = sin(punto.y + 100);
-            // punto = punto * x;
+    // x pasos o angulo en grados 
+    double x;
+    
+    //angulo a 
+    double a = 0.0;
+    
+  while (c--) {
+        cin >> op >> x;
+            double coseno = cos(angulo(a));
+            double seno = sin(angulo(a));
+            if (op == "fd") {
+            t = { t.x+x * coseno, t.y + x * seno };
         }
         else if (op == "bk") {
-            punto.x = cos(punto.x - 100);
-            punto.y = sin(punto.y - 100);
-            
-            // punto = punto * -x;
+            t = { t.x - x * coseno, t.y - x * seno };
         }
-        else if (op == "lt") {
-            punto = rotate(punto, x);
+        else if (op == "lt"){
+            a += x
+          
         }
-        else if (op == "rt") {
-            punto = rotate(punto, -x);
-        }
+        else if (op == "rt") {  
+            a -=x;
 
+        }
+  
     }
-
-    int distance = dist({1,1}, punto);
-
-
-    cout << distance << "\n";
+  int d = round(dist(t, { 0,0 }));
+    std::cout << d << "\n";
+    
 }
 
 int main() {
