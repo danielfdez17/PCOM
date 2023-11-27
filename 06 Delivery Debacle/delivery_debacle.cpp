@@ -1,17 +1,27 @@
-// Alex Bonilla Taco y Daniel Fernandez Ortiz
+// Daniel Fernandez Ortiz
 // PC03
 #include <iostream>
 #include <iomanip>
 #include <fstream>
 using namespace std;
 
+const int MAX = 41;
+long long cakes[MAX] = {0};
+
+long long ways(int n) {
+    if (n == 0 || n == 1) return cakes[n] = n;
+    if (n == 2) return cakes[n] = 5;
+    if (n == 3) return cakes[n] = 11;
+    if (cakes[n] == 0) return cakes[n] = ways(n - 1) + 4 * ways(n - 2) + 2 * ways(n - 3);
+    // if (cakes[n] == 0) return cakes[n] = 2 * ways(n - 1) + 3 * ways(n - 2) + 4 * ways(n - 3);
+    return cakes[n];
+}
+
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
-bool resuelveCaso() {
-    
-    if (!cin) return false;
-    
-    return true;    
+void resuelveCaso() {
+    int n; cin >> n;
+    cout << ways(n) << "\n";    
 }
 
 int main() {
@@ -23,7 +33,10 @@ int main() {
      #endif 
     
     
-    while (resuelveCaso());
+    int numCasos;
+    std::cin >> numCasos;
+    for (int i = 0; i < numCasos; ++i)
+        resuelveCaso();
 
     
     // Para restablecer entrada. Comentar para acepta el reto

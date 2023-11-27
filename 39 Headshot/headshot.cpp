@@ -3,14 +3,28 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <vector>
 using namespace std;
 
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
 bool resuelveCaso() {
-    
+    string cylinder; cin >> cylinder;
     if (!cin) return false;
-    
+    int n = cylinder.size();
+    // vector<int>probabilities(n);
+    int zeroes = 0, digits = 0, firstZero = n;
+    for (int i = n - 1; i >= 0; i--) {
+        char c = cylinder[i];
+        if (c == '0') {
+            zeroes++;
+            firstZero = i;
+        }
+        digits++;
+    }
+
+
+
     return true;    
 }
 

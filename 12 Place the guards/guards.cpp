@@ -1,17 +1,43 @@
-// Alex Bonilla Taco y Daniel Fernandez Ortiz
+// Daniel Fernandez Ortiz
 // PC03
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <vector>
+#include <cstring>
 using namespace std;
+
+#define V 200
+
+using vi = vector<int>;
+
+vi adj[V];
+bool visited[V];
+
+int dfs(int v) {
+    visited[v] = true;
+    int tam = 1;
+    for (int w : adj[v]) {
+        if (!visited[w]) {
+            visited[w] = true;
+            tam += dfs(w);
+        }
+    }
+    return tam;
+}
+
 
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
-bool resuelveCaso() {
-    
-    if (!cin) return false;
-    
-    return true;    
+void resuelveCaso() {
+
+    for (int i = 0; i < V; i++) adj[i].clear();
+    memset(visited, 0, sizeof(visited));
+
+    int v, e; cin >> v >> e;
+    for (int i = 0; i < e; i++) {
+
+    }
 }
 
 int main() {
@@ -23,7 +49,10 @@ int main() {
      #endif 
     
     
-    while (resuelveCaso());
+    int numCasos;
+    std::cin >> numCasos;
+    for (int i = 0; i < numCasos; ++i)
+        resuelveCaso();
 
     
     // Para restablecer entrada. Comentar para acepta el reto
