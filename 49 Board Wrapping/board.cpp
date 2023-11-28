@@ -275,7 +275,7 @@ void resuelveCaso() {
    vector<pt>res = convexHull(puntos);
    long double areaConvex = areaPolygon(res);
    long double sol = (area * 100) / areaConvex;
-   cout << fixed << setprecision(1) << sol << "%\n";
+   cout << fixed << setprecision(1) << sol << " %\n";
 }
 
 int main() {
