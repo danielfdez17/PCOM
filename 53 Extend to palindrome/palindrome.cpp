@@ -49,19 +49,31 @@ bool resuelveCaso() {
     cin >> T;
     if (!cin) return false;
     n = T.size();
-    P = "";
-    int j = n - 1;
-    char first = T[j];
-    --j;
-    if (T[j] != first);
-        P.push_back(first);
-    while (j >= 0 && T[j] != first) {
-        P.push_back(T[j]);
-        --j;
-    }
 
-    if (j == 0) cout << T << "\n";
-    else cout << T.append(P) << "\n";
+    string str = T;
+    reverse(str.begin(), str.end());
+    if (T == str) {
+        cout << T << "\n";
+    }
+    else {
+        P = "";
+        int i = 1; 
+        char last = T[n - 1];
+        P.push_back(last);
+        while (i < n && str[i] != last) {
+            P.push_back(str[i]);
+            i++;
+        }
+        P.push_back(last);
+        int psize = P.size(), tsize = T.size();
+        string to_append = "";
+        if (psize > tsize) {
+            to_append =     
+        }
+        int strsize = tsize - psize;
+        to_append = str.substr(tsize - strsize, tsize);
+        cout << T << to_append << "\n";
+    }
 
 
     // string str = T;
