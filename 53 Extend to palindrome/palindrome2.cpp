@@ -10,7 +10,7 @@ using namespace std;
 string T, P;
 vector<int>b; // back table
 int n, m;//tamaño de T, tamaño de P
-
+int t;//posicion del patron desde vamos a mostrar 
 /* Otra aplicacion del KMP:
 Dada una cadena, encontrar la longitud minima de una subcadena que se repite N veces
 para formar la cadena.
@@ -26,7 +26,7 @@ void kmpPreprocess() { // before calling kmpSearch
         while (j >= 0 && P[i] != P[j]) j = b[j];
         ++i; ++j;
         b[i] = j;
-    }
+     }
 }
 
 // (O(text size) === O(n)) + O(m)
@@ -35,12 +35,17 @@ void kmpSearch() {
     while (i < n) {
         while (j >= 0 && T[i] != P[j])
             j = b[j]; // different reset j using b
-        ++i; ++j;
+        ++i;++j;
+        /*
         if (j == m) {
             printf("P si found at index %d in T\n", i - j);
-            j = b[j];
+            //j = b[j];
         }
+        */
+        
     }
+    t = j;
+    
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
@@ -53,17 +58,25 @@ bool resuelveCaso() {
     reverse(P.begin(), P.end());
     m = P.size();
     b.resize(m + 1);
-    //T += P;
-    cout << T << "\n";
-    cout << P << "\n";
-    
+    //cout << T << "\n";
+    //cout << P << "\n";
     kmpPreprocess();
+    /*
     for (int i = 0; i < b.size(); i++) {
-        cout << b[i] << " ";
+        cout << b[i];
     }
     cout << endl;
+    */
     kmpSearch();
-    //despues de buscar comparar longitudes para si el resto es 0 la palabra es polindrima creo
+    cout << T;
+    //cout <<t<<endl;
+    if (t != T.size()) {
+        for (int i = t; i < P.size(); i++) {
+            cout << P[i];
+        }
+    }
+    cout<<endl;
+
     return true;
 }
 
