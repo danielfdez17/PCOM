@@ -8,7 +8,7 @@ using namespace std;
 
 #define MAX_N 100010
 
-string r;
+string T;
 int n, RA[MAX_N], tempRA[MAX_N], SA[MAX_N], tempSA[MAX_N], c[MAX_N];
 
 void countingSort(int k) {
