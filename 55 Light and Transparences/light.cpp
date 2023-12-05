@@ -246,29 +246,38 @@ void resuelveCaso() {
     vector <pt>puntos;
     vector<pair<pair<pt,pt>, double>>lineas;
     pt p1,p2;
-    for (int i = 0; i <n; i++) {
-        cin >> p1.x >> p1.y;
-        puntos.push_back({ p1.x,0 });
-        cin >> p2.x >> p2.y;
-        puntos.push_back({ p2.x,0 });
-        cin >> c;
-        lineas.push_back({ {{ p1.x,0 },{ p2.x,0 }},c });
-    }
-    sort(puntos.begin(), puntos.end());
-    sort(lineas.begin(), lineas.end());
-        c = 1;
-    cout << "-inf " << fixed << setprecision(3) << puntos[0].x << " " << fixed << setprecision(3) << c<<endl;
-    for (int i = 0; i < puntos.size()-1; i++) {
-        c = 1;
-        for (int j = 0; j < n; j++) {
-            if (lineas[j].first.first.x <= puntos[i].x && puntos[i].x <= lineas[j].first.second.x) {
-                c *= lineas[j].second;
+    if (n != 0) {
+        for (int i = 0; i <n; i++) {
+            cin >> p1.x >> p1.y;
+            puntos.push_back({ p1.x,0 });
+            cin >> p2.x >> p2.y;
+            puntos.push_back({ p2.x,0 });
+            cin >> c;
+            if (p1.x < p2.x) {
+                lineas.push_back({ {{ p1.x,0 },{ p2.x,0 }},c });
+            }
+            else {
+                lineas.push_back({ {{ p2.x,0 },{ p1.x,0 }},c });
             }
         }
+        sort(puntos.begin(), puntos.end());
+        c = 1;
+        cout << 2 * n + 1 << "\n";
+        cout << "-inf " << fixed << setprecision(3) << puntos[0].x << " " << fixed << setprecision(3) << c << "\n";
+        for (int i = 0; i < puntos.size()-1; i++) {
+            c = 1;
+            for (int j = 0; j < n; j++) {
+                if (lineas[j].first.first.x <= puntos[i].x && puntos[i].x <= lineas[j].first.second.x) {
+                    c *= lineas[j].second;
+                }
+            }
 
-    cout << fixed << setprecision(3) << puntos[i].x<<" " << fixed << setprecision(3) << puntos[i + 1].x << " " << fixed << setprecision(3) << c << endl;
+        cout << fixed << setprecision(3) << puntos[i].x<<" " << fixed << setprecision(3) << puntos[i + 1].x << " " << fixed << setprecision(3) << c << "\n";
+        }
+        c = 1;
+        cout << fixed << setprecision(3) << puntos[puntos.size()-1].x << " +inf " << fixed << setprecision(3) << c << "\n";
     }
-    cout << fixed << setprecision(3) << puntos[puntos.size()-1].x << " +inf " << fixed << setprecision(3) << 1<<endl<<endl;
+    cout << "\n";
 }
 
 int main() {
