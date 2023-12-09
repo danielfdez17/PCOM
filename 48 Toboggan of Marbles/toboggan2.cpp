@@ -229,10 +229,8 @@ bool resuelveCaso() {
     line rightRod = { {0,h},l };
     vector<line>lineas;
     vector<pt>pcentrales;
-    pcentrales.push_back({ 0,0 });
     for (int i = 0; i < n; i++) {
         double yi, xf, yf; cin >> yi >> xf >> yf;
-        // if even -> connected to the right
         pt p, q;
         if (i % 2 == 0) {
             p = { 0,yi };
@@ -240,7 +238,6 @@ bool resuelveCaso() {
             lineas.push_back(line(p, q));
             pcentrales.push_back(q);
         }
-        // if odd -> connected to the left
         if (i % 2 != 0) {
             p = { l,yi };
             q = { xf,yf };
@@ -249,24 +246,27 @@ bool resuelveCaso() {
         }
     }
     double minDist, d1, d2;
-    minDist = MAX_N;
-    for (int i = 1; i < pcentrales.size() - 1; i++) {
+    minDist = l;
+    int f = lineas.size() - 1;
+    int i = 1;
+    while (i <= f && minDist != 0) {
         if (i % 2 != 0) {
-            d1 = dist(pcentrales[i], rightRod.proj(pcentrales[i]));
+            d1 = rightRod.dist(pcentrales[i - 1]);
         }
-        else {
-            d1 = dist(pcentrales[i], leftRod.proj(pcentrales[i]));
+        else if (i % 2 == 0) {
+            d1 = leftRod.dist(pcentrales[i - 1]);
         }
-        d2 = dist(pcentrales[i], lineas[i].proj(pcentrales[i]));
+        d2 = lineas[i].dist(pcentrales[i - 1]);
         minDist = min(minDist, min(d1, d2));
+        i++;
     }
-    if (pcentrales.size() % 2 == 0) {
-        d1 = dist(pcentrales[pcentrales.size() - 1], rightRod.proj(pcentrales[pcentrales.size() - 1]));
+    if (f % 2 == 0) {
+        d1 = rightRod.dist(pcentrales[f]);
     }
-    else {
-        d1 = dist(pcentrales[pcentrales.size() - 1], leftRod.proj(pcentrales[pcentrales.size() - 1]));
-    }
+    else  d1 = leftRod.dist(pcentrales[f]);
+
     minDist = min(minDist, d1);
+
     cout << fixed << setprecision(2) << minDist << "\n";
     return true;
 }
