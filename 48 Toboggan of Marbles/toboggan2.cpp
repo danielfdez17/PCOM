@@ -228,7 +228,7 @@ bool resuelveCaso() {
     line leftRod = { {0,h},0 };
     line rightRod = { {0,h},l };
     vector<line>lineas;
-    vector<pt>pcentrales;
+    vector<pair<pt, pt>>pcentrales;
     for (int i = 0; i < n; i++) {
         double yi, xf, yf; cin >> yi >> xf >> yf;
         pt p, q;
@@ -236,13 +236,13 @@ bool resuelveCaso() {
             p = { 0,yi };
             q = { xf,yf };
             lineas.push_back(line(p, q));
-            pcentrales.push_back(q);
+            pcentrales.push_back({ q, p });
         }
         if (i % 2 != 0) {
             p = { l,yi };
             q = { xf,yf };
             lineas.push_back(line(p, q));
-            pcentrales.push_back(q);
+            pcentrales.push_back({ q, p });
         }
     }
     double minDist, d1, d2;
@@ -251,19 +251,22 @@ bool resuelveCaso() {
     int i = 1;
     while (i <= f && minDist != 0) {
         if (i % 2 != 0) {
-            d1 = rightRod.dist(pcentrales[i - 1]);
+            d1 = rightRod.dist(pcentrales[i - 1].first);
         }
         else if (i % 2 == 0) {
-            d1 = leftRod.dist(pcentrales[i - 1]);
+            d1 = leftRod.dist(pcentrales[i - 1].first);
         }
-        d2 = lineas[i].dist(pcentrales[i - 1]);
+        if (orient(pcentrales[i].first, pcentrales[i].second, lineas[i].proj(pcentrales[i - 1].first)) == 0) {
+            d2 = lineas[i].dist(pcentrales[i - 1].first);
+        }
+        else d2 = dist(pcentrales[i - 1].first, pcentrales[i].first);
         minDist = min(minDist, min(d1, d2));
         i++;
     }
     if (f % 2 == 0) {
-        d1 = rightRod.dist(pcentrales[f]);
+        d1 = rightRod.dist(pcentrales[f].first);
     }
-    else  d1 = leftRod.dist(pcentrales[f]);
+    else  d1 = leftRod.dist(pcentrales[f].first);
 
     minDist = min(minDist, d1);
 
