@@ -225,10 +225,12 @@ bool resuelveCaso() {
     // distance between the rods and their heights
     double l, h; cin >> l >> h;
     // left rod at (0, 0), right rod at (l, 0)
-    line leftRod = { {0,h},0 };
-    line rightRod = { {0,h},l };
+    line leftRod = line({ 0,h }, { 0,0 });
+    line rightRod = line({ l,h }, { l,0 });
+    //lines that form flaps
     vector<line>lineas;
-    vector<pair<pt, pt>>pcentrales;
+    //extreme points from flaps
+    vector<pair<pt, pt>>psegmentos;
     for (int i = 0; i < n; i++) {
         double yi, xf, yf; cin >> yi >> xf >> yf;
         pt p, q;
@@ -236,37 +238,52 @@ bool resuelveCaso() {
             p = { 0,yi };
             q = { xf,yf };
             lineas.push_back(line(p, q));
-            pcentrales.push_back({ q, p });
+            psegmentos.push_back({ q, p });
         }
         if (i % 2 != 0) {
             p = { l,yi };
             q = { xf,yf };
             lineas.push_back(line(p, q));
-            pcentrales.push_back({ q, p });
+            psegmentos.push_back({ q, p });
         }
     }
     double minDist, d1, d2;
     minDist = l;
     int f = lineas.size() - 1;
     int i = 1;
-    while (i <= f && minDist != 0) {
+    while (i <= f) {
+        pt proy = lineas[i].proj(psegmentos[i - 1].first);
         if (i % 2 != 0) {
-            d1 = rightRod.dist(pcentrales[i - 1].first);
+            d1 = rightRod.dist(psegmentos[i - 1].first);
+            if (proy < psegmentos[i].first) {
+                d2 = dist(psegmentos[i - 1].first, psegmentos[i].first);
+            }
+            else if (psegmentos[i].second < proy) {
+                d2 = dist(psegmentos[i - 1].first, psegmentos[i].second);
+            }
+            else {
+                d2 = lineas[i].dist(psegmentos[i - 1].first);
+            }
         }
         else if (i % 2 == 0) {
-            d1 = leftRod.dist(pcentrales[i - 1].first);
+            d1 = leftRod.dist(psegmentos[i - 1].first);
+            if (proy < psegmentos[i].second) {
+                d2 = dist(psegmentos[i - 1].first, psegmentos[i].second);
+            }
+            else if (psegmentos[i].first < proy) {
+                d2 = dist(psegmentos[i - 1].first, psegmentos[i].first);
+            }
+            else {
+                d2 = lineas[i].dist(psegmentos[i - 1].first);
+            }
         }
-        if (orient(pcentrales[i].first, pcentrales[i].second, lineas[i].proj(pcentrales[i - 1].first)) == 0) {
-            d2 = lineas[i].dist(pcentrales[i - 1].first);
-        }
-        else d2 = dist(pcentrales[i - 1].first, pcentrales[i].first);
         minDist = min(minDist, min(d1, d2));
         i++;
     }
     if (f % 2 == 0) {
-        d1 = rightRod.dist(pcentrales[f].first);
+        d1 = rightRod.dist(psegmentos[f].first);
     }
-    else  d1 = leftRod.dist(pcentrales[f].first);
+    else  d1 = leftRod.dist(psegmentos[f].first);
 
     minDist = min(minDist, d1);
 
