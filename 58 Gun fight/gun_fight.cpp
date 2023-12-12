@@ -15,7 +15,7 @@ const double EPS = 1e-9;
 const double PI = acos(-1);
 
 using T = double;
-vector<int,pair<int,int>>v;
+vector<int, pair<int, int>>v;
 
 struct pt {
     T x, y;
@@ -225,16 +225,8 @@ vector<pt> cutPolygon(pt a, pt b, vector<pt> const& P) {
         R.push_back(R[0]); // make R's first point = R's last point
     return R;
 }
-#define MAX 100
 
-using vi = vector<int>;
-using vvi = vector<vi>;
-vvi adjList;
-int V, E;
-bool visited[MAX];
-
-struct torre
-{
+struct torre {
     double x, y;
     int p;
 };
@@ -242,32 +234,88 @@ vector<torre>torres;
 vector<torre>tFree;
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
-vii 
+int M, N; // M parte izq, N parte der
+vector<vector<int>>grafo(1000);
+vector<int>match, vis;
+
+void montarGrafo(vector<torre>P, vector<torre>G, int& r) {
+    int n = P.size() + G.size();
+    int t = P.size();
+    //grafo.resize(n);
+    for (int i = 0; i < P.size(); i++) {
+        for (int j = 0; j < G.size(); j++) {
+            if (dist2({ P[i].x,P[i].y }, { G[j].x, G[j].y }) <= r * r && P[i].p > G[j].p) {
+                grafo[i].push_back(t + j);
+            }
+            if (dist2({ P[i].x,P[i].y }, { G[j].x, G[j].y }) <= r * r && P[i].p < G[j].p) {
+                grafo[t + j].push_back(i);
+            }
+        }
+
+    }
+
+
+}
+
+int aug(int l) {
+    // devuelve 1 si encuentra un augmenting path para el matching M representado en match
+    if (vis[l]) return 0;
+    vis[l] = 1;
+    for (auto r : grafo[l]) {
+        if (match[r] == -1 || aug(match[r])) {
+            match[r] = l;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+
+int merge_mcbm() {
+    int mcbm = 0;
+    match.assign(N + M, -1);
+    for (int l = 0; l < M; l++) {
+        vis.assign(M, 0);
+        mcbm += aug(l);
+    }
+    return mcbm;
+}
 bool resuelveCaso() {
-    int n, p;
+    int n, p, c;
     double x, y;
     int a, b, r;
     cin >> n;
-    
-    if (n==0) return false;
+
+    if (n == 0) return false;
     for (int i = 0; i < n; i++) {
         cin >> x >> y >> p;
-        if (p != 0)
-            torres.push_back({ x, y, p });
-        else tFree.push_back({ x,y,p });
-
+        torres.push_back({ x, y, p });
     }
     cin >> a >> b >> r;
-    line l=line({ tFree[0].x,tFree[0].y }, { tFree[1].x,tFree[1].y });
+    line l = line({ torres[a - 1].x,torres[a - 1].y }, { torres[b - 1].x,torres[b - 1].y });
     vector<torre> tladoI, tladoD;
     for (int i = 0; i < torres.size(); i++) {
+        if (torres[i].p == 0)continue;
         if (l.side({ torres[i].x , torres[i].y }) > 0) {
             tladoD.push_back({ torres[i].x , torres[i].y });
-        }else 
+        }
+        else
             tladoI.push_back({ torres[i].x , torres[i].y });
     }
-    if (tladoD.size() < tladoI.size()) montarListaAdj(tladoD, tladoI,r);
-    for()
+    int batlesWins = 0;
+    if (tladoD.size() < tladoI.size()) {
+        montarGrafo(tladoD, tladoI, r);
+        M = tladoD.size();
+        N = tladoI.size();
+    }
+    else {
+        montarGrafo(tladoI, tladoD, r);
+        N = tladoD.size();
+        M = tladoI.size();
+    }
+
+    batlesWins = merge_mcbm();
+    cout << "Case " << c << ": " << batlesWins << "\n";
     return true;
 }
 
