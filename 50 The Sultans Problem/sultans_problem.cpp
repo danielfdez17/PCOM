@@ -55,77 +55,8 @@ ostream& operator<<(ostream& os, pt p) {
     return os << "("<< p.x << "," << p.y << ")";
 }
 
-double dist(pt a, pt b) { // Euclidean distance
-    return hypot(a.x - b.x, a.y - b.y);
-}
-T dist2(pt a, pt b) {
-    return (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y);
-}
-
-// PRODUCTOS
-
-// Producto escalar
-T dot(pt v, pt w) { return v.x*w.x + v.y*w.y; }
-
-bool isPerp(pt v, pt w) { return dot(v,w) == 0; }
-
-// Producto escalar entre el tamanio de los vectores
-double angle(pt v, pt w) {
-    double cosTheta = dot(v,w) / abs(v) / abs(w);
-    return acos(max(-1.0, min(1.0, cosTheta)));
-}
-
 // Producto vectorial
 T cross(pt v, pt w) { return v.x*w.y - v.y*w.x; }
-
-// positivo/cero/negativo: c a la izquieda/sobre/derecha de a-b
-T orient(pt a, pt b, pt c) { return cross(b - a, c - a); }
-
-bool inAngle(pt a, pt b, pt c, pt p) {
-    assert(orient(a,b,c) != 0);
-    if (orient(a,b,c) < 0) swap(b,c);
-    return orient(a,b,p) >= 0 && orient(a,c,p) <= 0;
-}
-
-double orientedAngle(pt a, pt b, pt c) {
-    if (orient(a, b, c) >= 0)
-        return angle(b - a, c - a);
-    else
-        return 2*PI - angle(b - a, c - a);
-}
-
-
-// ORDENACIÓN POLAR
-
-bool half(pt p) { // true if in blue half
-    assert(p.x != 0 || p.y != 0); // the argument of (0,0) is undefined
-    return p.y > 0 || (p.y == 0 && p.x < 0);
-}
-
-// ordena los puntos por cjtos colineales
-void polarSort(vector<pt> & v) {
-    sort(v.begin(), v.end(), [](pt v, pt w) {
-        return make_tuple(half(v), 0, sq(v)) < make_tuple(half(w), cross(v,w), sq(w));
-    });
-}
-
-
-// TRANSFORMACIONES
-
-// el objeto se mueve en la dir del vector tanto como su tamanio
-pt translate(pt v, pt p) { return p + v; }
-
-// scale p by a certain factor around a center c
-// factor > 0 => grande, factor < 0 => pequenio
-pt scale(pt c, double factor, pt p) {
-    return c + (p - c)*factor;
-}
-
-// rotate p by a certain angle a counter-clockwise around origin
-// rotar en sentido anti horario
-pt rotate(pt p, double a) {
-    return { p.x*cos(a) - p.y*sin(a), p.x*sin(a) + p.y*cos(a) };
-}
 
 // rotate 90º counterclockwise
 pt perp(pt p) { return {-p.y, p.x}; }
@@ -165,10 +96,6 @@ bool inter(line l1, line l2, pt & out) {
 
 // POLIGONOS, el primer y último puntos coinciden
 
-double areaTriangle(pt a, pt b, pt c) {
-    return abs(cross(b - a, c - a)) / 2.0;
-}
-
 double areaPolygon(vector<pt> const& p) {
     double area = 0.0;
     for (int i = 0, n = int(p.size()) - 1; i < n; ++i) {
@@ -176,45 +103,6 @@ double areaPolygon(vector<pt> const& p) {
     }
     return abs(area) / 2.0;
 }
-
-bool isConvex(vector<pt> const& p) {
-    bool hasPos=false, hasNeg=false;
-    for (int i=0, n=(int)p.size(); i<n; ++i) {
-        int o = orient(p[i], p[(i+1)%n], p[(i+2)%n]);
-        if (o > 0) hasPos = true;
-        if (o < 0) hasNeg = true;
-    }
-    return !(hasPos && hasNeg);
-}
-
-
-// ENVOLVENTE CONVEXA
-
-// para aceptar puntos colineales cambia a >=
-// returns true if point r is on the left side of line pq
-bool ccw(pt p, pt q, pt r) {
-    return orient(p, q, r) > 0;
-}
-
-// devuelve un polígono con la envolvente convexa de una nube de puntos P.
-vector<pt> convexHull(vector<pt> & P) {
-    int n = int(P.size()), k = 0;
-    vector<pt> H(2*n);
-    sort(P.begin(), P.end());
-    // build lower hull
-    for (int i = 0; i < n; ++i) {
-        while (k >= 2 && !ccw(H[k-2], H[k-1], P[i])) --k;
-        H[k++] = P[i];
-    }
-    // build upper hull
-    for (int i = n-2, t = k+1; i >= 0; --i) {
-        while (k >= t && !ccw(H[k-2], H[k-1], P[i])) --k;
-        H[k++] = P[i];
-    }
-    H.resize(k);
-    return H;
-}
-
 
 // DIVISIÓN DE UN POLÍGONO
 vector<pt> cutPolygon(pt a, pt b, vector<pt> const& P) {
@@ -241,25 +129,35 @@ bool resuelveCaso() {
     pt font = {x,y};
     vector<pt>poligono;
     pt v1 = {0,0}, v2 = {W,0}, v3 = {W,H}, v4 = {0,H};
+    // Se guardan en un vector de puntos lo puntos que conforman el poligono 
     poligono.push_back(v1);
     poligono.push_back(v2);
     poligono.push_back(v3);
     poligono.push_back(v4);
     poligono.push_back(v1);
+    // Se guardan todas las rectas
     for (int i = 0; i < N; ++i) {
         double x1, y1, x2, y2; cin >> x1 >> y1 >> x2 >> y2;
         pt p1 = {x1,y1}, p2 = {x2,y2};
+        // Se guardan en la estructura de tipo linea
         line l(p1, p2);
+        // Y se comprueba donde esta la fuente con respecto a la linea
+        // Si la fuente esta a la izquierda de la linea
         if (l.side(font) > 0) {
+            // El poligono se corta con la direccion del vector de la recta, 
+            // para que devuelva el poligono que contiene a la fuente
             poligono = cutPolygon(p1, p2, poligono);
         }
+        // En cambio, si la fuente esta a la derecha de la linea
         else if (l.side(font) < 0) {
+            // Se corta el poligono con la direccion opuesa a la recta dada
+            // Si no se hace asi, el poligono resultado devolveria el poligono en el que no se encuentra la fuente
             poligono = cutPolygon(p2, p1, poligono);
         }
     }
-
+    // Al final se calcula el area del poligono resultado
     double area = areaPolygon(poligono);
-
+    // Y se muestra como pide el enunciado
     cout << "Case #" << cases << ": " << fixed << setprecision(3) << area << "\n";
     ++cases;
     return true;    
