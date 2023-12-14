@@ -5,12 +5,24 @@
 #include <fstream>
 using namespace std;
 
+#define SIZE 10
+
+char board[SIZE][SIZE];
+
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
 bool resuelveCaso() {
+    string word; cin >> word;
+    if (word == "end") return false;
+
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            char c; cin >> c;
+            board[i][j] = c;
+        }
+    }
     
-    if (caso especial) return false;
-    
+
     return true;    
 }
 
