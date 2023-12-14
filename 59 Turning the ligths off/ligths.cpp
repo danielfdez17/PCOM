@@ -8,8 +8,8 @@ using namespace std;
 #define SIZE 10
 #define OPTIONS 4
 
-char board[SIZE][SIZE];
-
+char board[SIZE][SIZE], boardAux[SIZE][SIZE];
+int ligths;
 int movs[4][2] = {{1,0},{0,1},{-1,0},{0,-1}};
 
 bool ok(int i, int j) {
@@ -17,14 +17,14 @@ bool ok(int i, int j) {
 }
 
 bool isOn(int x, int y) {
-    return board[x][y] == 'O';
+    return boardAux[x][y] == 'O';
 }
 
 void changeState(int x, int y) {
     if (isOn(x, y)) 
-        board[x][y] = '#';
+        boardAux[x][y] = '#';
     else
-        board[x][y] = 'O';
+        boardAux[x][y] = 'O';
 }
 
 void turn(int x, int y) {
@@ -46,6 +46,17 @@ void show() {
     }
 }
 
+void turnOff() {
+
+}
+
+bool areAllOff() {
+    int i = 0; bool exit = false;
+    while (i < SIZE && !isOn(SIZE - 1, i)) {
+        ++i;
+    }
+}
+
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
 bool resuelveCaso() {
@@ -56,21 +67,26 @@ bool resuelveCaso() {
         for (int j = 0; j < SIZE; ++j) {
             char c; cin >> c;
             board[i][j] = c;
+            boardAux[i][j] = c;
         }
     }
     if (word == "all_off") {
         cout << word << " 0\n";
     }
     else {
-        int ligths = 0;
-        for (int i = 0; i < SIZE; ++i) {
-            for (int j = 0; j < SIZE; ++j) {
-                if (isOn(i, j)) {
-                    turn(i + 1, j);
-                    ++ligths;
-                }
-            }
+        ligths = 0;
+        int k = 0; bool areAllOff = false;
+        while (k < SIZE && areAllOff) {
+            turnOff();
         }
+        // for (int i = 0; i < SIZE; ++i) {
+        //     for (int j = 0; j < SIZE; ++j) {
+        //         if (isOn(i, j)) {
+        //             turn(i + 1, j);
+        //             ++ligths;
+        //         }
+        //     }
+        // }
         if (ligths > 100) ligths = -1;
         cout << word << " " << ligths << "\n";
     }
