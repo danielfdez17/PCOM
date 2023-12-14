@@ -21,8 +21,10 @@ bool isOn(int x, int y) {
 }
 
 void changeState(int x, int y) {
-    if (isOn(x, y)) board[x][y] = '#';
-    else board[x][y] = 'O';
+    if (isOn(x, y)) 
+        board[x][y] = '#';
+    else
+        board[x][y] = 'O';
 }
 
 void turn(int x, int y) {
@@ -30,7 +32,7 @@ void turn(int x, int y) {
     for (int i = 0; i < OPTIONS; ++i) {
         int newx = x + movs[i][0], newy = y + movs[i][1];
         if (ok(newx, newy)) {
-            changeState(x, y);
+            changeState(newx, newy);
         }
     }
 }
@@ -56,19 +58,11 @@ bool resuelveCaso() {
             board[i][j] = c;
         }
     }
-    show();
-
     if (word == "all_off") {
         cout << word << " 0\n";
     }
     else {
         int ligths = 0;
-        // for (int i = 0; i < SIZE; ++i) {
-        //     if (isOn(0, i)) {
-        //         turn(0, i);
-        //         ++ligths;
-        //     }
-        // }
         for (int i = 0; i < SIZE; ++i) {
             for (int j = 0; j < SIZE; ++j) {
                 if (isOn(i, j)) {
